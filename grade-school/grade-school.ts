@@ -7,18 +7,7 @@ class Roster {
 
   public setRoster(grade: number, names: string[] = []): void {
     this.roster[grade] = this.roster[grade] || [];
-
-    const enrolledIn = this.checkEnrolled(names);
-    if (enrolledIn > 0) {
-      this.roster[enrolledIn] = this.roster[enrolledIn].filter(
-        (current) => !names.includes(current)
-      );
-    }
-
-    this.roster = {
-      ...this.roster,
-      [grade]: [...this.roster[grade], ...names].sort(),
-    };
+    this.addStudentsToRoster(grade, names);
   }
 
   public getRoster(): IRoster {
@@ -28,6 +17,24 @@ class Roster {
     }
 
     return roster;
+  }
+
+  private addStudentsToRoster(grade: number, names: string[]): void {
+    const enrolledIn = this.checkEnrolled(names);
+    if (enrolledIn > 0) {
+      this.removeStudentsFromRoster(enrolledIn, names);
+    }
+
+    this.roster = {
+      ...this.roster,
+      [grade]: [...this.roster[grade], ...names].sort(),
+    };
+  }
+
+  private removeStudentsFromRoster(grade: number, names: string[]): void {
+    this.roster[grade] = this.roster[grade].filter(
+      (current) => !names.includes(current)
+    );
   }
 
   private checkEnrolled(names: string[]): number {
@@ -64,6 +71,10 @@ export class GradeSchool {
   }
 
   public grade(grade: number): string[] {
+    return this.getGrade(grade);
+  }
+
+  private getGrade(grade: number): string[] {
     return this.roster()[grade] ? [...this.roster()[grade]] : [];
   }
 }
